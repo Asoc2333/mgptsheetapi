@@ -1,0 +1,138 @@
+openapi: 3.1.0
+info:
+  title: M酱 Google Sheets & Drive Access
+  description: 使用 Google Sheets 和 Drive API，让 GPT 能够列出、读取和编辑你有权限的表格。
+  version: 1.0.0
+servers:
+  - url: https://www.googleapis.com
+paths:
+  /drive/v3/files:
+    get:
+      operationId: listSpreadsheetFiles
+      summary: 列出你 Google Drive 中的所有 Google 表格文件
+      parameters:
+        - name: q
+          in: query
+          required: false
+          description: 搜索条件，例如 "mimeType='application/vnd.google-apps.spreadsheet'"
+          schema:
+            type: string
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+          example: files(id,name)
+      responses:
+        '200':
+          description: 文件列表
+          content:
+            application/json:
+              schema:
+                type: object
+  /v4/spreadsheets/{spreadsheetId}/values/{range}:
+    get:
+      operationId: readSheetRange
+      summary: 读取 Google Sheet 指定范围的内容
+      parameters:
+        - name: spreadsheetId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: range
+          in: path
+          required: true
+          schema:
+            type: string
+            example: Sheet1!A1:D10
+      responses:
+        '200':
+          description: 表格数据
+          content:
+            application/json:
+              schema:
+                type: object
+    put:
+      operationId: writeSheetRange
+      summary: 写入或覆盖指定范围的数据
+      parameters:
+        - name: spreadsheetId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: range
+          in: path
+          required: true
+          schema:
+            type: string
+            example: Sheet1!A1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                values:
+                  type: array
+                  items:
+                    type: array
+                    items:
+                      type: string
+              required:
+                - values
+      responses:
+        '200':
+          description: 写入成功
+          content:
+            application/json:
+              schema:
+                type: object
+  /v4/spreadsheets/{spreadsheetId}/values/{range}:append:
+    post:
+      operationId: appendSheetData
+      summary: 向指定表格范围追加数据
+      parameters:
+        - name: spreadsheetId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: range
+          in: path
+          required: true
+          schema:
+            type: string
+            example: Sheet1!A1
+        - name: valueInputOption
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [RAW, USER_ENTERED]
+            default: USER_ENTERED
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                values:
+                  type: array
+                  items:
+                    type: array
+                    items:
+                      type: string
+              required:
+                - values
+      responses:
+        '200':
+          description: 追加成功
+          content:
+            application/json:
+              schema:
+                type: object
+components: {}
