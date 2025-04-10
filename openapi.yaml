@@ -30,6 +30,16 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  files:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
   /v4/spreadsheets/{spreadsheetId}/values/{range}:
     get:
       operationId: readSheetRange
@@ -53,6 +63,17 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  range:
+                    type: string
+                  majorDimension:
+                    type: string
+                  values:
+                    type: array
+                    items:
+                      type: array
+                      items:
+                        type: string
     put:
       operationId: writeSheetRange
       summary: 写入或覆盖指定范围的数据
@@ -81,8 +102,6 @@ paths:
                     type: array
                     items:
                       type: string
-              required:
-                - values
       responses:
         '200':
           description: 写入成功
@@ -90,6 +109,15 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  updatedRange:
+                    type: string
+                  updatedRows:
+                    type: integer
+                  updatedColumns:
+                    type: integer
+                  updatedCells:
+                    type: integer
   /v4/spreadsheets/{spreadsheetId}/values/{range}:append:
     post:
       operationId: appendSheetData
@@ -126,8 +154,6 @@ paths:
                     type: array
                     items:
                       type: string
-              required:
-                - values
       responses:
         '200':
           description: 追加成功
@@ -135,4 +161,15 @@ paths:
             application/json:
               schema:
                 type: object
-components: {}
+                properties:
+                  updates:
+                    type: object
+                    properties:
+                      updatedRange:
+                        type: string
+                      updatedRows:
+                        type: integer
+                      updatedColumns:
+                        type: integer
+                      updatedCells:
+                        type: integer
